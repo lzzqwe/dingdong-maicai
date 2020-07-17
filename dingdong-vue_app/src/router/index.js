@@ -28,20 +28,60 @@ Vue.use(VueRouter)
           },
           {
               name:'Cate',
-              path:'/cart',
+              path:'/index/cart',
               component: ()=> import('../views/cart/Cart.vue')
           },
           {
               name:'Profile',
               path:'/profile',
               component: ()=> import('../views/profile/Profile.vue')
-          },
+          }
       ]
+  },
+  {
+    name:'Login',
+    path:'/login',
+    component: ()=> import('../views/login/Login.vue')
   },
   {
       name:'Detail',
       path:'/detail',
       component: ()=> import('../views/detail/Detail.vue')
+  },
+  {
+      name:'aboutWe',
+      path:'/about',
+      component: ()=> import('../views/about/aboutWe.vue')
+  },
+  {
+      name:'MyCenter',
+      path:'/myCenter',
+      component: ()=> import('../views/my_center/MyCenter.vue')
+  },
+  {
+      name:'OrderDetail',
+      path:'/orderDetail',
+      component: ()=> import('../views/orderDetail/OrderDetail.vue')
+  },
+  {
+    name:'AddAddress',
+    path:'/addAddress',
+    component: ()=> import('../views/address/AddAddress')
+  },
+  {
+    name:'EditAddress',
+    path:'/editAddress',
+    component: ()=> import('../views/address/EditAddress.vue')
+  },
+  {
+      name:"Amap",
+      path:'/amap',
+      component: ()=> import('../views/amap/Amap.vue')
+  },
+  {
+      name:"Video",
+      path:'/video',
+      component:()=> import('../views/video/Video.vue')
   }
 ]
 

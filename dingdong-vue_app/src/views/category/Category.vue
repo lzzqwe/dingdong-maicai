@@ -13,16 +13,23 @@
             <div class="content">
                 <!-- 商品标题栏 -->
                 <h4>{{ title }}</h4>
-                <div class="goods_item" v-for="item in goodsList" :key="item.id">
+                <div class="goods_item" v-for="item in goodsList" :key="item.id" @click="goDetail(item.id)">
                     <div class="img">
                         <img :src="JSON.parse(item.propaganda)[0].url"/>
                     </div>
                     <div class="goods_info">
-                        <div class="title">
-                            <p></p>
+                        <div class="goods_title">
+                            <p class="name">{{ item.name }}</p>
+                            <p class="bewrite">{{ item.bewrite }}</p>
+                        </div>
+                        <div class="price">
+                            <div>￥：{{ item.price }}</div>
+                            <icon-cart></icon-cart>
                         </div>
                     </div>
                 </div>
+                <!-- 底线 -->
+                <div class="bottom_line">我也是有底线的人~</div>
             </div>
         </div>
     </div>
@@ -30,6 +37,7 @@
 <script>
 import {getAllClass,getOneAllGoods} from '../../network/category.js'
 import IconCart from '../../components/content/IconCart.vue'
+// import  IconCart from '../../components/content/IconCart.vue'
 export default {
     name:'Category',
     data() {
@@ -67,7 +75,16 @@ export default {
             this.title = item_title
             // 然后重新获取右侧内容
             this.getOneAllGoods();
-        }
+        },
+        // 跳转到详情页
+        goDetail(id) {
+            this.$router.push({
+                path:'/detail',
+                query:{
+                    id
+                }
+            });
+        } 
     },
     components:{
         IconCart
@@ -83,6 +100,9 @@ export default {
         bottom: 0;
         right: 0;
         padding-top: 54px;
+        .title::-webkit-scrollbar {     // 隐藏纵向滚动条
+        display:none
+        }
         .title{
             float: left;
             overflow: auto;
@@ -109,6 +129,7 @@ export default {
             width: 70%;
             height: 100%;
             padding-left: 0.25rem;
+            padding-bottom: 60px;
             // 标题
             h4{
                 display: flex;
@@ -117,6 +138,69 @@ export default {
                 font-size: 0.3rem;
                 border-bottom: 1.5px solid #F7F7F7;
             }
+            .goods_item{
+                display: flex;
+                align-items: center;
+                height: 2.7rem;
+                border-bottom: 1.5px solid #F6F6F6;
+                font-size: 0.3rem;
+                .img{
+                    display: flex;
+                    align-items: center;
+                    width: 1.8rem;
+                    height: 1.8rem;
+                    // border: 1px solid red;
+                    img{
+                        width: 1.8rem;
+                        height: 1.8rem;
+                    }
+                }
+                .goods_info{
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    height: 2.5rem;
+                    width: 3rem;
+                    // border: 1px solid red;
+                    .goods_title{
+                        p{
+                            display: -webkit-box;
+                            overflow: hidden;
+                            -webkit-box-orient: vertical;
+                            -webkit-line-clamp: 1;  
+                        }
+                        .name{
+                            font-weight: bold;
+                        }
+                        .bewrite{
+                            color: #A0A0A0;
+                        }
+                    }
+                }
+                .price{
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    color: red;
+                    font-weight: bold;
+                    // border: 1px solid #000;
+                }
+            }
+            // 底线
+            .bottom_line{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 1rem;
+            background-color: #F8F4F5;
+            color: #999999;
+            font-size: 0.3rem;
+          }
+        }
+       .content::-webkit-scrollbar{
+            display: none;
         }
     }
 </style>

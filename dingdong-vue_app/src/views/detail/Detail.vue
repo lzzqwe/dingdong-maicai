@@ -1,10 +1,12 @@
 <template>
     <div class="detail" v-if="this.detailData.name">
-        <van-nav-bar
+        <van-sticky :offset-top="0">
+            <van-nav-bar
             title="商品详情"
             left-arrow
             @click-left="onClickLeft"
         />
+        </van-sticky>
         <div class="goods_info">
             <img :src="JSON.parse(this.detailData.carousel)[0].url"/>
             <div class="info">
@@ -71,10 +73,11 @@
         <div class="bottom_line">我也是有底线的人~</div>
         <!-- 底部工具栏 -->
         <van-goods-action>
-            <van-goods-action-icon icon="chat-o" text="客服" @click="onClickIcon" />
+            <van-goods-action-icon v-if="this.isStar" icon="star-o" text="收藏" @click="onClickIcon" />
+            <van-goods-action-icon v-if="!this.isStar" icon="star" color="#EE0A24" text="收藏" @click="onClickIcon" />
             <van-goods-action-icon icon="cart-o" text="购物车" @click="goCart" />
-            <van-goods-action-button type="warning" text="加入购物车" @click="addCart" />
-            <van-goods-action-button type="danger" text="立即购买" @click="goPay" />
+            <van-goods-action-button type="warning" text="加入购物车" @click="addCard()" />
+            <van-goods-action-button type="danger" text="立即购买" @click="goPay()" />
         </van-goods-action>
     </div>
 </template>
@@ -89,6 +92,8 @@ export default {
             id:'',  //请求参数
             detailData:[],  // 详情页数据列表
             create_time:'',   // 格式化后的日期
+            isStar:true,    // 收藏
+            goodsItem:{}    // 定义一个添加到购物车数组的空对象
         }
     },
     created() {
@@ -98,9 +103,12 @@ export default {
 
         // 发起请求 获取详情页数据
         getDetail(this.id).then(res=>{
-            console.log(res)
             this.detailData = res.data;
-
+            console.log(res.data)
+            this.goodsItem.id = this.id;
+            this.goodsItem.name = res.data.name;
+            this.goodsItem.price = res.data.price;
+            this.goodsItem.propaganda = res.data.propaganda;
         // 格式化日期
         // let time = this.detailData.create_time
         let date = new Date();
@@ -118,11 +126,70 @@ export default {
         // 客服
         onClickIcon() {},
         // 购物车
-        goCart(){},
+        goCart(){
+            this.$router.push({
+                path:'/index/cart'
+            });
+        },
         // 商品添加到购物车
-        addCart(){},
+        addCard(){
+            console.log(this.goodsItem,"aaa")
+            this.$toast({
+                message:'添加成功！',
+                icon:'success',
+                duration:1000
+            });
+            // console.log(this.goodsItem.id);
+            let index = this.$store.state.cartList.findIndex(item => {       // 有就返回找到的那个元素对象 没有返回 undefined 
+                return item.id == this.goodsItem.id;                        // findIndex 有返回索引位置  没有返回 -1
+            });
+            if(index==-1){
+                // 当购物车数组中不存在时
+                this.$set(this.goodsItem,'num',1);
+                this.$set(this.goodsItem,'isCheck',false);
+                this.$store.state.cartList.push(this.goodsItem);
+            }else{
+                // 当购物车数组中已经存在时
+                this.$store.state.cartList[index].num ++;
+            }
+            console.log(this.$store.state.cartList);
+        },
         // 立即支付
-        goPay() {}
+        goPay() {
+            let index = this.$store.state.cartList.findIndex(item => {       // 有就返回找到的那个元素对象 没有返回 undefined 
+                return item.id == this.goodsItem.id;                        // findIndex 有返回索引位置  没有返回 -1
+            });
+            console.log(this.goodsItem.id)
+            console.log(index)
+            if(index==-1){
+                // 当购物车数组中不存在时
+                this.$set(this.goodsItem,'num',1);
+                this.$set(this.goodsItem,'isCheck',false);
+                this.$store.state.cartList.push(this.goodsItem);
+            }else{
+                // 当购物车数组中已经存在时   
+                this.$store.state.cartList[index].num ++;
+            }
+            console.log(this.$store.state.cartList)
+            this.$router.push({
+                path:'/index/cart'
+            });
+        },
+        // 收藏
+        onClickIcon(){
+            this.isStar = !this.isStar;
+            if(!this.isStar){
+                this.$toast({
+                    message:'商品收藏成功！',
+                    duration:1000
+                })
+            }else{
+                this.$toast({
+                    message:'商品已取消收藏！',
+                    duration:1000
+                })
+            }
+        }
     },
     components:{
         AddVip
